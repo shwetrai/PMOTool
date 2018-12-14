@@ -6,11 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mongodb.DuplicateKeyException;
-import com.mongodb.MongoWriteConcernException;
-import com.mongodb.MongoWriteException;
 import com.pmo.api.beans.Resources;
-import com.pmo.api.exceptions.DuplicateRecordFoundException;
 import com.pmo.api.repository.resources.ResourcesRepository;
 
 @Service
@@ -30,21 +26,7 @@ public class ResourcesServiceImplementation implements ResourcesService {
 			
 		try{
 			resourcesRepository.save(todo);
-		}catch(DuplicateKeyException duplicateKeyException) {
-			System.out.println("in duplicateKeyException...");
-			throw new DuplicateRecordFoundException("Duplicate Record Found for "+todo.getResourceId());
-		}catch(MongoWriteConcernException  mongoWriteConcernException) {
-			System.out.println("in MongoException...");
-			System.out.println("mongoWriteConcernException.getCode()....."+mongoWriteConcernException.getCode());
-			throw new DuplicateRecordFoundException("Duplicate Record Found for "+todo.getResourceId());
-			//throw mongoWriteConcernException;
-		}catch(MongoWriteException  MongoWriteException) {
-			System.out.println("in MongoWriteException...");
-			System.out.println("MongoWriteException.getCode()....."+MongoWriteException.getCode());
-			throw new DuplicateRecordFoundException("Duplicate Record Found for "+todo.getResourceId());
-			//throw mongoWriteConcernException;
-		}
-		catch(Exception ex) {
+		}catch(Exception ex) {
 			System.out.println("in Exception...");
 			throw ex;
 		}
@@ -71,6 +53,7 @@ public class ResourcesServiceImplementation implements ResourcesService {
 		// TODO Auto-generated method stub
 		resource.setId(id);
 		Resources r1 = resourcesRepository.save(resource);
+		
 		System.out.println("Resource Name......"+r1.getName());
 		
 	}

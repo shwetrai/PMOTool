@@ -1,6 +1,7 @@
 package com.pmo.api.beans;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -43,7 +44,15 @@ public class Resources {
 	private String currentLocation;
 
 	
+	private List<Comments> commentList;
 
+	
+	public List<Comments> getCommentList() {
+		return commentList;
+	}
+	public void setCommentList(List<Comments> commentList) {
+		this.commentList = commentList;
+	}
 	public String getResourceId() {
 		return resourceId;
 	}
@@ -107,5 +116,6 @@ public class Resources {
 	public void setCurrentLocation(String currentLocation) {
 		this.currentLocation = currentLocation;
 	}
+	
 
 }

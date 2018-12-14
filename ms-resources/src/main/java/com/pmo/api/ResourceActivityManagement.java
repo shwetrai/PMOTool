@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pmo.api.beans.AssetsOverview;
+import com.pmo.api.beans.Comments;
 import com.pmo.api.beans.InductionStatus;
 import com.pmo.api.beans.ResourceStatus;
 import com.pmo.api.beans.Resources;
 import com.pmo.api.beans.ToolingActivity;
+import com.pmo.api.db.comments.CommentsServiceImplementation;
 import com.pmo.api.db.resources.ResourcesServiceImplementation;
 import com.pmo.api.exceptions.DuplicateRecordFoundException;
 import com.pmo.api.exceptions.ResourceNotFoundException;
@@ -33,7 +34,10 @@ public class ResourceActivityManagement {
 
 	@Autowired
 	ResourcesServiceImplementation resourcesServiceImplementation;
-	 
+
+	@Autowired
+	CommentsServiceImplementation commentsServiceImplementation;
+ 
 	  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value="/resources/create")
 	    public void create(@RequestBody Resources resources) {
 		 
@@ -42,14 +46,27 @@ public class ResourceActivityManagement {
 		 
 		 resources.setCreationDate(new Date());
 		 
-		 System.out.println("Band.."+resources.getBand());
-		 System.out.println("Base.."+resources.getBaseLocation());
-		 System.out.println("getCodeCoverage.."+resources.getAssetOverview().getCodeCoverage());
-		 System.out.println("getArchitecturalInduction.."+resources.getInductionStatus().getArchitecturalInduction());
-		 System.out.println("Tooling Activities.ADC Tool.."+resources.getToolingActivities().getAdcTool());
+		 System.out.println("Band.."+resources.getResourceId());
+		 System.out.println("Base.."+resources.getName());
+		 
 		 
 		 try{
+			 	
+			 List<Comments> commentList = resources.getCommentList();
+			 System.out.println("commentList is null "+(resources.getCommentList()==null));
+			 
+			 if(commentList != null && commentList.size()>0) {
+				 commentsServiceImplementation.createAll(commentList);
+				 
+				 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
+				 
+			 }else {
+				 System.out.println("Comments1..."+commentList);
+			 }
+			 
+			 resources.setCommentList(commentList);
 			 resourcesServiceImplementation.create(resources);
+			 
 		 }catch(DuplicateRecordFoundException drfe) {
 			 System.out.println("Dup found");
 			 throw drfe;
@@ -101,10 +118,26 @@ public class ResourceActivityManagement {
 	 
 	 @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value="/resources/{id}")
 	    public void update(@PathVariable String id, @RequestBody Resources resources) {
-		 System.out.println("**** Entered into update() ******");
+		 
+		 System.out.println("**** Entered into ResourceActivityManagement.update() ******");
+
 		 resources.setCreationDate(new Date());
+		 List<Comments> commentList = resources.getCommentList();
+
+		 System.out.println("commentList is null "+(resources.getCommentList()==null));
+		 
+		 if(commentList != null && commentList.size()>0) {
+			 commentsServiceImplementation.createAll(commentList);
+			 
+			 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
+		 }else {
+			 System.out.println("Comments1..."+commentList);
+		 }
+		 
+		 resources.setCommentList(commentList);
 		 resourcesServiceImplementation.update(id, resources);
 		 
+		 System.out.println("**** Exiting  from ResourceActivityManagement.update() ******");
 	  }
 	 
 	 @GetMapping(value="/resources/all")
