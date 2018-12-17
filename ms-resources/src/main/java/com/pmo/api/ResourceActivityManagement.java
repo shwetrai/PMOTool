@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -36,7 +37,7 @@ public class ResourceActivityManagement {
 	ResourcesServiceImplementation resourcesServiceImplementation;
 
 	@Autowired
-	CommentsServiceImplementation commentsServiceImplementation;
+    CommentsServiceImplementation commentsServiceImplementation;
  
 	  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value="/resources/create")
 	    public void create(@RequestBody Resources resources) {
@@ -46,8 +47,8 @@ public class ResourceActivityManagement {
 		 
 		 resources.setCreationDate(new Date());
 		 
-		 System.out.println("Band.."+resources.getResourceId());
-		 System.out.println("Base.."+resources.getName());
+		 System.out.println("ResourceId.."+resources.getResourceId());
+		 System.out.println("Name.."+resources.getName());
 		 
 		 
 		 try{
@@ -56,7 +57,10 @@ public class ResourceActivityManagement {
 			 System.out.println("commentList is null "+(resources.getCommentList()==null));
 			 
 			 if(commentList != null && commentList.size()>0) {
-				 commentsServiceImplementation.createAll(commentList);
+//				 commentsServiceImplementation.createAll(commentList);
+				 for (Comments commentItem: commentList) {
+							commentItem.setId(UUID.randomUUID());
+				}
 				 
 				 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
 				 
@@ -122,19 +126,22 @@ public class ResourceActivityManagement {
 		 System.out.println("**** Entered into ResourceActivityManagement.update() ******");
 
 		 resources.setCreationDate(new Date());
-		 List<Comments> commentList = resources.getCommentList();
-
-		 System.out.println("commentList is null "+(resources.getCommentList()==null));
+//		 List<Comments> commentList = resources.getCommentList();
+//
+//		 System.out.println("commentList is null "+(resources.getCommentList()==null));
+//		 
+//		 if(commentList != null && commentList.size()>0) {
+//			 commentsServiceImplementation.createAll(commentList);
+//			 
+//			 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
+//		 }else {
+//			 System.out.println("Comments1..."+commentList);
+//		 }
+//		 
+//		 resources.setCommentList(commentList);
 		 
-		 if(commentList != null && commentList.size()>0) {
-			 commentsServiceImplementation.createAll(commentList);
-			 
-			 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
-		 }else {
-			 System.out.println("Comments1..."+commentList);
-		 }
+		
 		 
-		 resources.setCommentList(commentList);
 		 resourcesServiceImplementation.update(id, resources);
 		 
 		 System.out.println("**** Exiting  from ResourceActivityManagement.update() ******");
@@ -166,7 +173,7 @@ public class ResourceActivityManagement {
 				 
 				 if(	
 						 "Yes".equalsIgnoreCase(assetsOverview.getCodeCoverage()) &&
-						  "Yes".equalsIgnoreCase(assetsOverview.getCodeReview()) &&
+						  "Yes".equalsIgnoreCase(assetsOverview.getDataDrivenTesting()) &&
 						 "Yes".equalsIgnoreCase(assetsOverview.getEsqlGenerator()) && 
 						 "Yes".equalsIgnoreCase(assetsOverview.getLoggingFramework())
 						 

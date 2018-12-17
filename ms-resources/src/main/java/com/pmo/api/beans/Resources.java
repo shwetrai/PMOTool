@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -16,7 +16,8 @@ public class Resources {
     private String id;
 	
 	
-	@Field("resourceId")
+//	@Field("resourceId")
+	@Indexed(unique = true)
 	private String resourceId;
 	
 	@Field("name")
@@ -43,8 +44,20 @@ public class Resources {
 	@Field("currentLocation")
 	private String currentLocation;
 
-	
+	@Field("commentList")
 	private List<Comments> commentList;
+	
+	@Field("nbsid")
+	private String nbsid;
+	
+	@Field("rate")
+	private String rate;
+	
+	@Field("ibmid")
+	private String ibmid;
+	
+	@Field("role")
+	private String role;
 
 	
 	public List<Comments> getCommentList() {
@@ -115,6 +128,30 @@ public class Resources {
 	}
 	public void setCurrentLocation(String currentLocation) {
 		this.currentLocation = currentLocation;
+	}
+	public String getNbsid() {
+		return nbsid;
+	}
+	public void setNbsid(String nbsid) {
+		this.nbsid = nbsid;
+	}
+	public String getRate() {
+		return rate;
+	}
+	public void setRate(String rate) {
+		this.rate = rate;
+	}
+	public String getIbmid() {
+		return ibmid;
+	}
+	public void setIbmid(String ibmid) {
+		this.ibmid = ibmid;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 

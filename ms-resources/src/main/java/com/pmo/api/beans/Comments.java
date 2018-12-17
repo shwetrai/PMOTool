@@ -1,28 +1,18 @@
 package com.pmo.api.beans;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import java.util.UUID;
 
-@Document(collection = "resource_tracker_comments")
+//import org.springframework.data.mongodb.core.mapping.Document;
+//import org.springframework.data.mongodb.core.mapping.Field;
+
+//@Document(collection = "resource_tracker_comments")
 public class Comments {
 
-	@Id
-    private String id;
-	
-	@Field("commentsText")
+    private UUID id;
 	private String commentsText;
-	
-	@Field("commentsDate")
 	private String commentsDate;
-	
-	
-	@Field("commentsBy")
 	private String commentsBy;
-	
-	
-//	@Field("resourceId")
-//	private String resourceId;
+	private String resourceId;
 	
 	
 	public String getCommentsDate() {
@@ -37,10 +27,10 @@ public class Comments {
 	public void setCommentsBy(String commentsBy) {
 		this.commentsBy = commentsBy;
 	}
-	public String getId() {
+	public UUID getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	
@@ -51,11 +41,11 @@ public class Comments {
 		this.commentsText = commentsText;
 	}
 	
-//	public String getResourceId() {
-//		return resourceId;
-//	}
-//	public void setResourceId(String resourceId) {
-//		this.resourceId = resourceId;
-//	}
+	public String getResourceId() {
+		return resourceId;
+	}
+	public void setResourceId(String resourceId) {
+		this.resourceId = resourceId;
+	}
 		
 }

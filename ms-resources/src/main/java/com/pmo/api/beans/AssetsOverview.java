@@ -8,12 +8,7 @@ public class AssetsOverview {
 	public void setCodeCoverage(String codeCoverage) {
 		this.codeCoverage = codeCoverage;
 	}
-	public String getCodeReview() {
-		return codeReview;
-	}
-	public void setCodeReview(String codeReview) {
-		this.codeReview = codeReview;
-	}
+
 	public String getLoggingFramework() {
 		return loggingFramework;
 	}
@@ -26,9 +21,18 @@ public class AssetsOverview {
 	public void setEsqlGenerator(String esqlGenerator) {
 		this.esqlGenerator = esqlGenerator;
 	}
+	
+
+	public String getDataDrivenTesting() {
+		return dataDrivenTesting;
+	}
+	public void setDataDrivenTesting(String dataDrivenTesting) {
+		this.dataDrivenTesting = dataDrivenTesting;
+	}
+
 
 	private String codeCoverage;
-	private String codeReview;
+	private String dataDrivenTesting;
 	private String loggingFramework;
 	private String esqlGenerator;
 	
