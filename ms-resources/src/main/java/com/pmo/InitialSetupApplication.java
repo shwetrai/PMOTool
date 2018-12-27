@@ -10,6 +10,8 @@ public class InitialSetupApplication {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(InitialSetupApplication.class, args);
+		
 	}
+
 
 }

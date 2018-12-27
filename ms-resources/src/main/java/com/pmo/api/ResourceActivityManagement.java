@@ -26,6 +26,7 @@ import com.pmo.api.db.comments.CommentsServiceImplementation;
 import com.pmo.api.db.resources.ResourcesServiceImplementation;
 import com.pmo.api.exceptions.DuplicateRecordFoundException;
 import com.pmo.api.exceptions.ResourceNotFoundException;
+import com.pmo.api.logger.APILogger;
 
 
 
@@ -35,85 +36,83 @@ public class ResourceActivityManagement {
 
 	@Autowired
 	ResourcesServiceImplementation resourcesServiceImplementation;
+	
+	@Autowired
+	APILogger apiLogger;
+	
 
 	@Autowired
     CommentsServiceImplementation commentsServiceImplementation;
+
  
 	  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value="/resources/create")
-	    public void create(@RequestBody Resources resources) {
+	   public void create(@RequestBody Resources resources) {
 		 
-		 System.out.println("**** Entered into create() ******");
-		 System.out.println("Creating resource for :"+resources.getName());
+		 apiLogger.logInfo("Entered into ResourceActivityManagement.create().Id->"+resources.getResourceId());
 		 
 		 resources.setCreationDate(new Date());
-		 
-		 System.out.println("ResourceId.."+resources.getResourceId());
-		 System.out.println("Name.."+resources.getName());
-		 
 		 
 		 try{
 			 	
 			 List<Comments> commentList = resources.getCommentList();
-			 System.out.println("commentList is null "+(resources.getCommentList()==null));
+			 apiLogger.logInfo("commentList is null "+(resources.getCommentList()==null));
 			 
 			 if(commentList != null && commentList.size()>0) {
-//				 commentsServiceImplementation.createAll(commentList);
 				 for (Comments commentItem: commentList) {
 							commentItem.setId(UUID.randomUUID());
 				}
-				 
-				 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
+				 apiLogger.logInfo("comment text -->"+commentList.get(0).getCommentsText());
 				 
 			 }else {
-				 System.out.println("Comments1..."+commentList);
+				 apiLogger.logInfo("Comments1..."+commentList);
 			 }
 			 
 			 resources.setCommentList(commentList);
 			 resourcesServiceImplementation.create(resources);
 			 
-		 }catch(DuplicateRecordFoundException drfe) {
-			 System.out.println("Dup found");
-			 throw drfe;
 		 }catch(org.springframework.dao.DuplicateKeyException ex) {
-			 System.out.println("DuplicateKeyException found...."+ex.getLocalizedMessage());
+			 apiLogger.logError("Exception Block_22->ResourceActivityManagement.create().DuplicateKeyException->"+ex.getMessage());
 			 throw ex;
 		 }catch(Exception ex) {
-			 System.out.println("ex found...."+ex.getLocalizedMessage());
+			 apiLogger.logError("Exception Block_33->ResourceActivityManagement.create().Exception->"+ex.getMessage());
 			 throw ex;
 		 }
 		 
-		 System.out.println("Exiting from create resource ****");
+		 apiLogger.logInfo("Exiting from ResourceActivityManagement.create().ID->"+resources.getResourceId());
 	  }
 	 
 		 
+	 
 	 @GetMapping(value="/greet/{name}")
-	    public String hello(@PathVariable String name) {
+	 public String hello(@PathVariable String name) {
+		 	apiLogger.logInfo("inf.."+name);
+		 	apiLogger.logDebug("debug testing..."+name);
 	        return "hello "+name;
-	    }
+	 }
 	 
 	 @GetMapping(value="/resources/{resourceId}")
 	    public Optional<Resources> getResourcesByResourceId(@PathVariable String resourceId) {
-		    System.out.println("**** Entered into getResourcesByResourceId() ******");
+		    apiLogger.logInfo("Entered into ResourceActivityManagement.getResourcesByResourceId()->"+resourceId);
 	        Optional<Resources>  resource = resourcesServiceImplementation.findByResourceId(resourceId);
-	        System.out.println("Internal ID:"+resource.get().getId());
-	        System.out.println("ResourceId :"+resource.get().getResourceId());
-	        
-	        if (!resource.isPresent())
+	        System.out.println("Resources.........."+resource);
+	        if (!resource.isPresent()) {
 	        	throw new ResourceNotFoundException("Record not found for -"+resourceId);
-	        
+	        }else {
+	        	System.out.println("Record Found for "+resource.get().getName());
+	        }
+	        apiLogger.logInfo("Exiting from ResourceActivityManagement.getResourcesByResourceId()->"+resourceId);
 			return resource;
 	    }
 	 
 	 @GetMapping(value="/resources/name/{resourceName}")
 	    public Optional<Resources> getResourceDetailsByName(@PathVariable String resourceName) {
-		 System.out.println("**** Entered into getResourceDetailsByName() ******");
-		 Optional<Resources> resourceResult = resourcesServiceImplementation.findByResourceName(resourceName);
-		
-		 System.out.println("Resource Result = "+resourceResult);
+		 apiLogger.logInfo("Entered into ResourceActivityManagement.getResourceDetailsByName().resourceName->"+resourceName);
+			 Optional<Resources> resourceResult = resourcesServiceImplementation.findByResourceName(resourceName);
 			 if (!resourceResult.isPresent()) {
-				 System.out.println("Throwing exception....");
+				 apiLogger.logError("ResourceActivityManagement.getResourceDetailsByName().ResourceNotFoundException for Resource Name - "+resourceName);
 				 throw new ResourceNotFoundException("Record not found for '"+resourceName+"'");
 			 }
+		 apiLogger.logInfo("Exiting from ResourceActivityManagement.getResourceDetailsByName()->"+resourceName);
 			return resourceResult;
 	    }
 	 
@@ -123,101 +122,105 @@ public class ResourceActivityManagement {
 	 @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value="/resources/{id}")
 	    public void update(@PathVariable String id, @RequestBody Resources resources) {
 		 
-		 System.out.println("**** Entered into ResourceActivityManagement.update() ******");
+		 apiLogger.logInfo("Entered into ResourceActivityManagement.update().Id->"+resources.getResourceId());
 
 		 resources.setCreationDate(new Date());
-//		 List<Comments> commentList = resources.getCommentList();
-//
-//		 System.out.println("commentList is null "+(resources.getCommentList()==null));
-//		 
-//		 if(commentList != null && commentList.size()>0) {
-//			 commentsServiceImplementation.createAll(commentList);
-//			 
-//			 System.out.println("comment text -->"+commentList.get(0).getCommentsText());
-//		 }else {
-//			 System.out.println("Comments1..."+commentList);
-//		 }
-//		 
-//		 resources.setCommentList(commentList);
-		 
-		
-		 
 		 resourcesServiceImplementation.update(id, resources);
 		 
-		 System.out.println("**** Exiting  from ResourceActivityManagement.update() ******");
+		 apiLogger.logInfo("Exiting from ResourceActivityManagement.update().Id->"+resources.getResourceId());
 	  }
 	 
 	 @GetMapping(value="/resources/all")
 	    public List<ResourceStatus> getAllResourcesStatus() {
-		 System.out.println("**** Entered into getAllResourcesStatus() ******");
+		 apiLogger.logInfo("Entered into ResourceActivityManagement.getAllResourcesStatus()");
 		 ResourceStatus resourceStatus = null;
 		 List<ResourceStatus> resourceList = new ArrayList<ResourceStatus> ();
 		 
-		 List<Resources> resources = resourcesServiceImplementation.findAllResources();
-		 
-		 if(resources != null && resources.size()>=0) {
-			 System.out.println("All Resource - Record Found...size===>"+resources.size());
-			 for (Resources resourceItem: resources) {
-				 
-				 resourceStatus = new ResourceStatus();
-				 
-				 resourceStatus.setResourceId(resourceItem.getResourceId());
-				 resourceStatus.setResourceName(resourceItem.getName());
-				 resourceStatus.setId(resourceItem.getId());
-				 
-				 AssetsOverview assetsOverview = resourceItem.getAssetOverview();
-				 ToolingActivity toolingActivities = resourceItem.getToolingActivities();
-				 InductionStatus inductionStatus =resourceItem.getInductionStatus();
-				 
-				 
-				 
-				 if(	
-						 "Yes".equalsIgnoreCase(assetsOverview.getCodeCoverage()) &&
-						  "Yes".equalsIgnoreCase(assetsOverview.getDataDrivenTesting()) &&
-						 "Yes".equalsIgnoreCase(assetsOverview.getEsqlGenerator()) && 
-						 "Yes".equalsIgnoreCase(assetsOverview.getLoggingFramework())
-						 
-					) {
-					 	resourceStatus.setAssetsOverview("Yes");
-				 	}else {
-				 		resourceStatus.setAssetsOverview("No");
-				 	}
-				 
-				 if(
-						 "Yes".equalsIgnoreCase(toolingActivities.getAdcTool()) && "Yes".equalsIgnoreCase(toolingActivities.getAlm()) &&
-						 "Yes".equalsIgnoreCase(toolingActivities.getArdTool()) && "Yes".equalsIgnoreCase(toolingActivities.getDb2()) &&
-						 "Yes".equalsIgnoreCase(toolingActivities.getDb2explorer()) && "Yes".equalsIgnoreCase(toolingActivities.getIib()) &&
-						 "Yes".equalsIgnoreCase(toolingActivities.getJenkins()) && "Yes".equalsIgnoreCase(toolingActivities.getMq()) &&
-						 "Yes".equalsIgnoreCase(toolingActivities.getMqexplorer()) && "Yes".equalsIgnoreCase(toolingActivities.getPutty()) &&
-						 "Yes".equalsIgnoreCase(toolingActivities.getReadyAPI()) 						 
-				   ) {
-					 resourceStatus.setToolingStatus("Yes");
-				 }else {
-					 resourceStatus.setToolingStatus("No");
-				 }
-				 if(
-						 "Yes".equalsIgnoreCase(inductionStatus.getAgileTraining()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getArchitecturalInduction()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getClientInduction()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getCodeWalkthrough()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getCommonPatterns()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getDevTech()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getSisInduction()) &&
-						 "Yes".equalsIgnoreCase(inductionStatus.getTestingFramework())
-						 
-				   ) {
-					 resourceStatus.setInductionStatus("Yes");
+		 try {
+			List<Resources> resources = resourcesServiceImplementation.findAllResources();
+			 
+			 if(resources != null && resources.size()>=0) {
+				 apiLogger.logInfo("All Resource - Record Found...size===>"+resources.size());
+				 for (Resources resourceItem: resources) {
 					 
-				 }else {
-					 resourceStatus.setInductionStatus("No");
-				 }
-				 resourceList.add(resourceStatus);
-		      } // end of For Loop
-		 } else {
-			 System.out.println("All Resource - No Record Found");
-		 }
+					 resourceStatus = new ResourceStatus();
+					 
+					 resourceStatus.setResourceId(resourceItem.getResourceId());
+					 resourceStatus.setResourceName(resourceItem.getName());
+					 resourceStatus.setId(resourceItem.getId());
+					 
+					 AssetsOverview assetsOverview = resourceItem.getAssetOverview();
+					 ToolingActivity toolingActivities = resourceItem.getToolingActivities();
+					 InductionStatus inductionStatus =resourceItem.getInductionStatus();
+					 
+					 
+					 
+					 if(	
+							( "Yes".equalsIgnoreCase(assetsOverview.getCodeCoverage()) || "NA".equalsIgnoreCase(assetsOverview.getCodeCoverage()))&&
+							 ( "Yes".equalsIgnoreCase(assetsOverview.getDataDrivenTesting()) || "NA".equalsIgnoreCase(assetsOverview.getDataDrivenTesting())) &&
+							 ( "Yes".equalsIgnoreCase(assetsOverview.getEsqlGenerator()) || "NA".equalsIgnoreCase(assetsOverview.getEsqlGenerator())) &&
+							( "Yes".equalsIgnoreCase(assetsOverview.getLoggingFramework()) || "NA".equalsIgnoreCase(assetsOverview.getLoggingFramework()))
+							 
+						) {
+						 	resourceStatus.setAssetsOverview("Yes");
+					 	}else {
+					 		resourceStatus.setAssetsOverview("No");
+					 	}
+					 
+					 if(
+							 ("Yes".equalsIgnoreCase(toolingActivities.getAdcTool()) || "NA".equalsIgnoreCase(toolingActivities.getAdcTool())) && 
+							 ("Yes".equalsIgnoreCase(toolingActivities.getAlm()) || "NA".equalsIgnoreCase(toolingActivities.getAlm())) && 
+							 ("Yes".equalsIgnoreCase(toolingActivities.getArdTool()) || "NA".equalsIgnoreCase(toolingActivities.getArdTool())) &&
+							 ( "Yes".equalsIgnoreCase(toolingActivities.getDb2()) || "NA".equalsIgnoreCase(toolingActivities.getDb2())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getDb2explorer()) || "NA".equalsIgnoreCase(toolingActivities.getDb2explorer())) &&
+							 ( "Yes".equalsIgnoreCase(toolingActivities.getIib()) || "NA".equalsIgnoreCase(toolingActivities.getIib())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getJenkins()) || "NA".equalsIgnoreCase(toolingActivities.getJenkins())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getMq()) || "NA".equalsIgnoreCase(toolingActivities.getMq())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getMqexplorer()) || "NA".equalsIgnoreCase(toolingActivities.getMqexplorer())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getPutty()) || "NA".equalsIgnoreCase(toolingActivities.getPutty())) &&
+							 ("Yes".equalsIgnoreCase(toolingActivities.getReadyAPI()) || "NA".equalsIgnoreCase(toolingActivities.getReadyAPI())) 						 
+					   ) {
+						 resourceStatus.setToolingStatus("Yes");
+					 }else {
+						 resourceStatus.setToolingStatus("No");
+					 }
+					 if(
+							 ("Yes".equalsIgnoreCase(inductionStatus.getAgileTraining()) || "NA".equalsIgnoreCase(inductionStatus.getAgileTraining())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getArchitecturalInduction()) || "NA".equalsIgnoreCase(inductionStatus.getArchitecturalInduction())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getClientInduction()) || "NA".equalsIgnoreCase(inductionStatus.getClientInduction())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getCodeWalkthrough()) || "NA".equalsIgnoreCase(inductionStatus.getCodeWalkthrough())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getCommonPatterns()) || "NA".equalsIgnoreCase(inductionStatus.getCommonPatterns())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getDevTech()) || "NA".equalsIgnoreCase(inductionStatus.getDevTech())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getSisInduction()) || "NA".equalsIgnoreCase(inductionStatus.getSisInduction())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getTestingFramework()) || "NA".equalsIgnoreCase(inductionStatus.getTestingFramework())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getBuildProcess()) || "NA".equalsIgnoreCase(inductionStatus.getBuildProcess())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getGovernanceTool()) || "NA".equalsIgnoreCase(inductionStatus.getGovernanceTool())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getCicd()) || "NA".equalsIgnoreCase(inductionStatus.getCicd())) &&
+							 ("Yes".equalsIgnoreCase(inductionStatus.getCodingStd()) || "NA".equalsIgnoreCase(inductionStatus.getCodingStd()))
+							 
+					   ) {
+						 resourceStatus.setInductionStatus("Yes");
+						 
+					 }else {
+						 resourceStatus.setInductionStatus("No");
+					 }
+					 resourceList.add(resourceStatus);
+			      } // end of For Loop
+			 } else {
+				 apiLogger.logInfo("All Resource - No Record Found");
+			 }
+		} catch (Exception e) {
+			apiLogger.logError("getAllResourcesStatus() -> Some Error Occurred - "+e.getMessage());
+			resourceList=null;
+			e.printStackTrace();
+		}
+		 apiLogger.logInfo("Exiting from ResourceActivityManagement.getAllResourcesStatus");
 		return resourceList;
 		 
 	  }
 	 	
+	 public ResourceActivityManagement() {
+		 if(this.apiLogger==null)  this.apiLogger= new APILogger();
+	 }
+	 
 }

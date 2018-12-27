@@ -1,0 +1,42 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.pmo.api.config.ServerConfiguration",
+      "name": "server",
+      "type": "com.pmo.api.config.ServerConfiguration"
+    },
+    {
+      "sourceType": "com.pmo.api.config.DBConfiguration",
+      "name": "spring.data.mongodb",
+      "type": "com.pmo.api.config.DBConfiguration"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.pmo.api.config.ServerConfiguration",
+      "name": "server.name",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.pmo.api.config.ServerConfiguration",
+      "name": "server.port",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.pmo.api.config.DBConfiguration",
+      "name": "spring.data.mongodb.database",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.pmo.api.config.DBConfiguration",
+      "name": "spring.data.mongodb.host",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.pmo.api.config.DBConfiguration",
+      "name": "spring.data.mongodb.port",
+      "type": "java.lang.String"
+    }
+  ]
+}

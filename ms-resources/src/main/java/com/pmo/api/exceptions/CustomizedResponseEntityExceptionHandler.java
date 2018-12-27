@@ -1,21 +1,14 @@
 package com.pmo.api.exceptions;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.WordUtils;
+
+import java.util.Date;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -33,17 +26,18 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	  }
 
 	  @ExceptionHandler(ResourceNotFoundException.class)
-	  public final ResponseEntity<ErrorRecord> handlerResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-	    ErrorRecord errorDetails = new ErrorRecord(new Date(), ex.getMessage(),
-	        request.getDescription(false), HttpStatus.NOT_FOUND);
-	    return new ResponseEntity<ErrorRecord>(errorDetails, HttpStatus.NOT_FOUND);
+	  public final ResponseEntity<Object> handlerResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+//	    ErrorRecord errorDetails = new ErrorRecord(new Date(), ex.getMessage(),
+//	        request.getDescription(false), HttpStatus.NOT_FOUND);
+	    return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 	  }
 	  
 	  @ExceptionHandler(org.springframework.dao.DuplicateKeyException.class)
-	  public final ResponseEntity<ErrorRecord> handlerDuplicateRecordFoundException(DuplicateKeyException ex, WebRequest request) {
-	    ErrorRecord errorDetails = new ErrorRecord(new Date(), "Duplicate Record Found",
-	        request.getDescription(false), HttpStatus.CONFLICT);
-	    return new ResponseEntity<ErrorRecord>(errorDetails, HttpStatus.CONFLICT);
+	  public final ResponseEntity<String> handlerDuplicateRecordFoundException(DuplicateKeyException ex, WebRequest request) {
+//	    ErrorRecord errorDetails = new ErrorRecord(new Date(), "Duplicate Record Found",
+//	        request.getDescription(false), HttpStatus.CONFLICT);
+	    System.out.println("Error occurred -> handlerDuplicateRecordFoundException");
+	    return new ResponseEntity<>("Duplicate Record Found", HttpStatus.CONFLICT);
 	  }
 	  
 //	  @ExceptionHandler(org.springframework.dao.DuplicateKeyException.class)

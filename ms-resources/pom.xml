@@ -37,6 +37,18 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<!-- 
+			<exclusions>
+	            <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-logging</artifactId>
+	       		 </exclusion>
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>logback-classic</artifactId>
+		        </exclusion>
+        	</exclusions>
+        	-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -56,6 +68,30 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--  Logging Dependencies -Added for Properties Configuration component START -->	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+<!--  Logging Dependencies -Added for Properties Configuration component END -->
+
+<!--  Logging Dependencies START -->	
+<!-- 
+ 		<dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-starter-log4j2</artifactId>
+	    	</dependency>	
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    </dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    </dependency>
+-->		    
+<!--  Logging Dependencies END -->		
 	</dependencies>
 
 	<dependencyManagement>
